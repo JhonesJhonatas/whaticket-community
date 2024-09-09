@@ -14,7 +14,7 @@ interface Request {
   status?: string;
   date?: string;
   showAll?: string;
-  userId: string;
+  userId: number;
   withUnreadMessages?: string;
   queueIds: number[];
 }

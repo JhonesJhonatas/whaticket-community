@@ -263,6 +263,7 @@ const messages = {
       ticketsList: {
         pendingHeader: "Aguardando",
         assignedHeader: "Atendendo",
+        pausedHeader: "Pausado",
         noTicketsTitle: "Nada aqui!",
         noTicketsMessage:
           "Nenhum ticket encontrado com esse status ou termo pesquisado",
@@ -291,6 +292,7 @@ const messages = {
           administration: "Administração",
           users: "Usuários",
           settings: "Configurações",
+          reports: "Relatórios",
         },
         appBar: {
           user: {
@@ -382,6 +384,8 @@ const messages = {
           buttons: {
             return: "Retornar",
             resolve: "Resolver",
+            pause: "Pausar",
+            resume: "Despausar",
             reopen: "Reabrir",
             accept: "Aceitar",
           },

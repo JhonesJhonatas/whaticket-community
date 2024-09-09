@@ -67,7 +67,7 @@ const Dashboard = () => {
 		<div>
 			<Container maxWidth="lg" className={classes.container}>
 				<Grid container spacing={3}>
-					<Grid item xs={4}>
+					<Grid item xs={3}>
 						<Paper className={classes.customFixedHeightPaper} style={{ overflow: "hidden" }}>
 							<Typography component="h3" variant="h6" color="primary" paragraph>
 								{i18n.t("dashboard.messages.inAttendance.title")}
@@ -79,7 +79,19 @@ const Dashboard = () => {
 							</Grid>
 						</Paper>
 					</Grid>
-					<Grid item xs={4}>
+					<Grid item xs={3}>
+						<Paper className={classes.customFixedHeightPaper} style={{ overflow: "hidden" }}>
+							<Typography component="h3" variant="h6" color="primary" paragraph>
+								Pausados
+							</Typography>
+							<Grid item>
+								<Typography component="h1" variant="h4">
+									{GetTickets("paused", "true", "false")}
+								</Typography>
+							</Grid>
+						</Paper>
+					</Grid>
+					<Grid item xs={3}>
 						<Paper className={classes.customFixedHeightPaper} style={{ overflow: "hidden" }}>
 							<Typography component="h3" variant="h6" color="primary" paragraph>
 								{i18n.t("dashboard.messages.waiting.title")}
@@ -91,7 +103,7 @@ const Dashboard = () => {
 							</Grid>
 						</Paper>
 					</Grid>
-					<Grid item xs={4}>
+					<Grid item xs={3}>
 						<Paper className={classes.customFixedHeightPaper} style={{ overflow: "hidden" }}>
 							<Typography component="h3" variant="h6" color="primary" paragraph>
 								{i18n.t("dashboard.messages.closed.title")}

@@ -104,6 +104,7 @@ const TicketsManager = () => {
 
   const [openCount, setOpenCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
+  const [pausedCount, setPausedCount] = useState(0);
 
   const userQueueIds = user.queues.map((q) => q.id);
   const [selectedQueueIds, setSelectedQueueIds] = useState(userQueueIds || []);
@@ -264,6 +265,18 @@ const TicketsManager = () => {
             label={
               <Badge
                 className={classes.badge}
+                badgeContent={pausedCount}
+                color="primary"
+              >
+                {i18n.t("ticketsList.pausedHeader")}
+              </Badge>
+            }
+            value={"paused"}
+          />
+          <Tab
+            label={
+              <Badge
+                className={classes.badge}
                 badgeContent={pendingCount}
                 color="secondary"
               >
@@ -280,6 +293,13 @@ const TicketsManager = () => {
             selectedQueueIds={selectedQueueIds}
             updateCount={(val) => setOpenCount(val)}
             style={applyPanelStyle("open")}
+          />
+          <TicketsList
+            status="paused"
+            showAll={showAllTickets}
+            selectedQueueIds={selectedQueueIds}
+            updateCount={(val) => setPausedCount(val)}
+            style={applyPanelStyle("paused")}
           />
           <TicketsList
             status="pending"

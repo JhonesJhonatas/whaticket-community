@@ -1,9 +1,11 @@
 import CheckContactOpenTickets from "../../helpers/CheckContactOpenTickets";
 import SetTicketMessagesAsRead from "../../helpers/SetTicketMessagesAsRead";
 import { getIO } from "../../libs/socket";
+import Log from "../../models/Log";
 import Ticket from "../../models/Ticket";
-import SendWhatsAppMessage from "../WbotServices/SendWhatsAppMessage";
-import ShowWhatsAppService from "../WhatsappService/ShowWhatsAppService";
+import User from "../../models/User";
+// import SendWhatsAppMessage from "../WbotServices/SendWhatsAppMessage";
+// import ShowWhatsAppService from "../WhatsappService/ShowWhatsAppService";
 import ShowTicketService from "./ShowTicketService";
 
 interface TicketData {
@@ -16,6 +18,7 @@ interface TicketData {
 interface Request {
   ticketData: TicketData;
   ticketId: string | number;
+  authorId: number;
 }
 
 interface Response {
@@ -26,14 +29,16 @@ interface Response {
 
 const UpdateTicketService = async ({
   ticketData,
-  ticketId
+  ticketId,
+  authorId
 }: Request): Promise<Response> => {
   const { status, userId, queueId, whatsappId } = ticketData;
+  const newResponsable = await User.findByPk(userId);
 
   const ticket = await ShowTicketService(ticketId);
   await SetTicketMessagesAsRead(ticket);
 
-  if(whatsappId && ticket.whatsappId !== whatsappId) {
+  if (whatsappId && ticket.whatsappId !== whatsappId) {
     await CheckContactOpenTickets(ticket.contactId, whatsappId);
   }
 
@@ -50,8 +55,56 @@ const UpdateTicketService = async ({
     userId
   });
 
+  if (userId && newResponsable && newResponsable.id !== oldUserId) {
+    await Log.create({
+      description: `Ticket ${ticket.contact.name} atribuido para ${newResponsable.name}`,
+      authorId
+    });
+  }
 
-  if(whatsappId) {
+  if (status === "open" && oldStatus === "closed") {
+    await Log.create({
+      description: `Ticket ${ticket.contact.name} reaberto`,
+      authorId
+    });
+  }
+
+  if (status === "open" && oldStatus === "paused") {
+    await Log.create({
+      description: `Ticket ${ticket.contact.name} despausado`,
+      authorId
+    });
+  }
+
+  if (status === "open" && oldStatus === "pending") {
+    await Log.create({
+      description: `Ticket ${ticket.contact.name} aceito`,
+      authorId
+    });
+  }
+
+  if (status === "paused") {
+    await Log.create({
+      description: `Ticket ${ticket.contact.name} pausado`,
+      authorId
+    });
+  }
+
+  if (status === "closed") {
+    await Log.create({
+      description: `Ticket ${ticket.contact.name} resolvido`,
+      authorId
+    });
+  }
+
+  if (status === "pending") {
+    await Log.create({
+      description: `Ticket ${ticket.contact.name} marcado como pendente`,
+      authorId
+    });
+  }
+
+  if (whatsappId) {
     await ticket.update({
       whatsappId
     });
@@ -67,8 +120,6 @@ const UpdateTicketService = async ({
       ticketId: ticket.id
     });
   }
-
-
 
   io.to(ticket.status)
     .to("notification")
